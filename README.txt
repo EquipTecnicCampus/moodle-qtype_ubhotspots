@@ -1,0 +1,1 @@
+See 19 branch: https://github.com/EquipTecnicCampus/moodle-qtype_ubhotspots/tree/MOODLE_19_STABLE
