@@ -1,0 +1,144 @@
+<?php
+ $wwwr = $CFG->wwwroot.'/question/type/ubhotspots/';
+ $hsufix = $question->id;
+ $colors = array('aqua', 'red', 'blue', 'fuchsia','green' ,'yellow', 'navy','lime', 'maroon',  'olive',  'gray', 'purple',  'silver', 'teal');
+ 
+ // This is for avoid problems with image cache, see
+ // http://www.thefutureoftheweb.com/blog/image-onload-isnt-being-called
+ // http://api.jquery.com/load-event/
+ $imgsufix = random_string();
+ 
+ 
+?>
+
+<script type="text/javascript" src="<?php echo $wwwr; ?>jquery.js"></script>
+<script type="text/javascript" src="<?php echo $wwwr; ?>jquery.ui.js"></script>
+<script language="javascript">
+    
+    // IE hack with cached images  
+    var areaLoaded = false;
+    var hsimage<?php echo $hsufix;?> = new Image();    
+    hsimage<?php echo $hsufix;?>.src = "<?php echo $image."#".$imgsufix?>";
+        
+    $(document).ready(function(){
+    
+        function relocateResponse(k,r){
+            var x,y;
+            var pos = r.split(',');
+            
+            x = parseInt(pos[0]);
+            x += parseInt($("#ubhotspotsimage<?php echo $hsufix;?>").offset().left);
+            y = parseInt(pos[1]);
+            y += parseInt($("#ubhotspotsimage<?php echo $hsufix;?>").offset().top);
+            
+            x -= Math.round(parseInt($('#hsdraggable<?php echo $nameprefix; ?>'+k).css('width')) / 2);
+            y -= Math.round(parseInt($('#hsdraggable<?php echo $nameprefix; ?>'+k).css('height')) / 2);
+            
+            
+            $('#id_<?php echo $nameprefix; ?>'+k).val(r);            
+            
+            $('#hsdraggable<?php echo $nameprefix; ?>'+k).offset({top: y, left: x});
+            
+        }
+        
+        hsimage<?php echo $hsufix;?>.onload = function(){
+            $("#ubhotspotsimage<?php echo $hsufix;?>").css('width',hsimage<?php echo $hsufix;?>.width).css('height',hsimage<?php echo $hsufix;?>.height); 
+            loadAreaResponses();
+        }       
+        
+        // IE hack with cached images 
+        if(hsimage<?php echo $hsufix;?>.width){            
+            $("#ubhotspotsimage<?php echo $hsufix;?>").css('width',hsimage<?php echo $hsufix;?>.width).css('height',hsimage<?php echo $hsufix;?>.height);
+            if(!areaLoaded){
+                loadAreaResponses();
+            }
+        }
+        
+        function  loadAreaResponses(){       
+        
+        areaLoaded = true;
+       
+        // Make main image droppable
+        $("#ubhotspotsimage<?php echo $hsufix;?>").droppable({
+                                        drop: function(event, ui){                                            
+                                            var x = ui.offset.left - $(this).offset().left;
+                                            var y = ui.offset.top - $(this).offset().top;
+                                            
+                                            if(ui.draggable.css('width')){
+                                                x += parseInt(ui.draggable.css('width')) / 2 ;
+                                            }
+                                            if(ui.draggable.css('height')){
+                                                y += parseInt(ui.draggable.css('height')) / 2;
+                                            }
+                                            
+                                            var iid = "#id_"+ui.draggable.attr('id').replace("hsdraggable","");
+                                            $(iid).val(Math.round(x)+","+Math.round(y));                                            
+                                        }
+                                    });
+        $(".hsdraggable<?php echo $hsufix;?>").draggable();        
+
+        
+        <?php
+        if (isset($state->responses)) {
+            foreach ($state->responses as $key=>$response) {
+                if($response){
+                    echo "relocateResponse('$key','$response');\n";
+                }
+            }
+        }
+        ?>
+        }
+        
+    }
+    );
+
+</script>
+
+<div class="qtext">
+    <?php echo $questiontext; ?>
+</div>
+
+<?php
+if ($image) {
+?>
+
+<div class="ablock clearfix">
+    
+
+    <div id="ubhotspotsimage<?php echo $hsufix;?>" style ="border: solid 1px red;background: url('<?php echo $image;?>') top left no-repeat"></div>
+<?php
+    $i = 0;
+    foreach($question->options->answers as $key=>$a){
+        $index_color = $i;
+        if($index_color >= count($colors)){
+            $index_color = $index_color % count($colors);
+        }
+        $a = json_decode($a->answer);        
+        echo "<div style=\"clear: both; padding: 3px\"><div style=\"float: left\"><span style=\"background-color: ".$colors[$index_color]."\">&nbsp;&nbsp;</span>&nbsp;";
+        echo format_string($a->text)."</div>";        
+        echo '<div id="hsdraggable'.$nameprefix.$key.'" class="hsdraggable'.$hsufix.'" style="float: left; width: 10px; height: 10px; background-color: '.$colors[$index_color].'; cursor: pointer; -webkit-border-radius: 999px; -moz-border-radius: 999px; border-radius: 999px;"></div>';
+        if(isset($imgfeedback[$key])){
+            echo '<div style="float: left">'.(question_get_feedback_image($imgfeedback[$key])).'</div>';
+        }
+        echo '<input type="hidden" name="'.$nameprefix.$key.'" id="id_'.$nameprefix.$key.'" value=""></div>';
+        $i++;
+    }    
+?>
+
+    <?php if ($feedback) { ?>
+        <div class="feedback">
+            <?php echo $feedback ?>
+        </div>
+    <?php } ?>
+
+    <?php $this->print_question_submit_buttons($question, $state, $cmoptions, $options); ?>
+</div>
+
+<?php
+}
+else{
+    echo get_string('missingimage', 'qtype_ubhotspots');
+}
+
+?>
+
