@@ -65,7 +65,7 @@ class ubhotspots_qtype extends default_questiontype {
                          
             if ($answer = array_shift($oldanswers)) {  // Existing answer, so reuse it
                 
-                $answer->answer     = json_encode($a);
+                $answer->answer     = addslashes(json_encode($a));
                 $answer->fraction   = $fraction;
                 $answer->feedback = '';
                 if (!update_record("question_answers", $answer)) {
@@ -75,7 +75,7 @@ class ubhotspots_qtype extends default_questiontype {
             } else {
                 
                 unset($answer);
-                $answer->answer   = json_encode($a);
+                $answer->answer   = addslashes(json_encode($a));
                 $answer->question = $question->id;
                 $answer->fraction = $fraction;
                 $answer->feedback = '';
@@ -103,7 +103,7 @@ class ubhotspots_qtype extends default_questiontype {
             $options->question = $question->id;
         }
         
-        $options->hseditordata = $question->hseditordata;
+        $options->hseditordata = addslashes($question->hseditordata);
         
         if ($update) {
             if (!update_record("question_ubhotspots", $options)) {
