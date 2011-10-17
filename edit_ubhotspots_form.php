@@ -32,7 +32,7 @@ class question_edit_ubhotspots_form extends question_edit_form {
     function set_data($question) {
         
         if(isset($question->options)){
-            $default_values['hseditordata'] =  $question->options->hseditordata;
+            $default_values['hseditordata'] =  stripslashes($question->options->hseditordata);
             $question = (object)((array)$question + $default_values);
         }
         parent::set_data($question);
