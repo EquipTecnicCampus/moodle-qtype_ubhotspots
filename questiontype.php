@@ -8,6 +8,8 @@
  * @package ubhotspots
  *//** */
 
+require_once($CFG->libdir.'/pear/HTML/AJAX/JSON.php');
+ 
 /**
  * The ubhotspots question class
  */
