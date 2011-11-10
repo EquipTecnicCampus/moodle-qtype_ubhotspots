@@ -175,7 +175,7 @@ class ubhotspots_qtype extends default_questiontype {
         
         $imgfeedback = array();
         
-        if(!empty($state->responses)){
+        if(($options->feedback || $options->correct_responses) && !empty($state->responses)){
             foreach ($state->responses as $key=>$response){
                 if(isset($question->options->answers[$key]))
                     $imgfeedback[$key] = $this->check_coords($response,$question->options->answers[$key]->answer);                
