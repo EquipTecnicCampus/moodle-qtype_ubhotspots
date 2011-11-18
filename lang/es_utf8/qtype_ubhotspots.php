@@ -9,6 +9,7 @@
  *
  */
 
+$string['pluginname'] = 'UB Hot Spots';
 $string['editingubhotspots'] = 'Editando UB Hot Spots';
 $string['addingubhotspots'] = 'Añadiendo UB Hot Spots';
 $string['ubhotspots'] = 'UB Hot Spots';
