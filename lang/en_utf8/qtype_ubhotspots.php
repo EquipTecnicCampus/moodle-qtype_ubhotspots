@@ -8,7 +8,7 @@
  * @package ubhotspots
  *
  */
-
+$string['pluginname'] = 'UB Hot Spots';
 $string['editingubhotspots'] = 'Editing UB Hot Spots';
 $string['addingubhotspots'] = 'Adding UB Hot Spots';
 $string['ubhotspots'] = 'UB Hot Spots';
