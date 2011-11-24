@@ -23,7 +23,7 @@ class ubhotspots_qtype extends default_questiontype {
      * @return boolean to indicate success of failure.
      */
     function get_question_options(&$question) {
-        if (!$question->options = get_record('question_ubhotspots', 'question', $question->id)) {
+        if (!$question->options = get_record('qtype_ubhotspots', 'question', $question->id)) {
             notify('Error: Missing question options for ubhotspots question'.$question->id.'!');
             return false;
         }
@@ -98,7 +98,7 @@ class ubhotspots_qtype extends default_questiontype {
         }
         
         $update = true;
-        $options = get_record("question_ubhotspots", "question", $question->id);
+        $options = get_record("qtype_ubhotspots", "question", $question->id);
         if (!$options) {
             $update = false;
             $options = new stdClass;
@@ -108,12 +108,12 @@ class ubhotspots_qtype extends default_questiontype {
         $options->hseditordata = addslashes($question->hseditordata);
         
         if ($update) {
-            if (!update_record("question_ubhotspots", $options)) {
+            if (!update_record("qtype_ubhotspots", $options)) {
                 $result->error = "Could not update quiz ubhotspots options! (id=$options->id)";
                 return $result;
             }
         } else {
-            if (!insert_record("question_ubhotspots", $options)) {
+            if (!insert_record("qtype_ubhotspots", $options)) {
                 $result->error = "Could not insert quiz ubhotspots options!";
                 return $result;
             }
@@ -129,7 +129,7 @@ class ubhotspots_qtype extends default_questiontype {
      * @return boolean to indicate success of failure.
      */
     function delete_question($questionid) {
-        delete_records("question_ubhotspots", "question", $questionid);
+        delete_records("qtype_ubhotspots", "question", $questionid);
         return true;
     }
     
@@ -281,7 +281,7 @@ class ubhotspots_qtype extends default_questiontype {
 
         $status = true;
 
-        $ubhotspots = get_records("question_ubhotspots","question",$question,"id");
+        $ubhotspots = get_records("qtype_ubhotspots","question",$question,"id");
         //If there are ubhotspots
         if ($ubhotspots) {
             //Iterate over each ubhotspots
@@ -315,13 +315,13 @@ class ubhotspots_qtype extends default_questiontype {
         for($i = 0; $i < sizeof($ubhotspots); $i++) {
             $mul_info = $ubhotspots[$i];
 
-            //Now, build the question_ubhotspots record structure
+            //Now, build the qtype_ubhotspots record structure
             $ubhotspot = new stdClass;
             $ubhotspot->question = $new_question_id;
             $ubhotspot->hseditordata = backup_todb($mul_info['#']['HSEDITORDATA']['0']['#']);                      
 
             //The structure is equal to the db, so insert the question_shortanswer
-            $newid = insert_record ("question_ubhotspots",$ubhotspot);
+            $newid = insert_record ("qtype_ubhotspots",$ubhotspot);
 
             //Do some output
             if (($i+1) % 50 == 0) {
